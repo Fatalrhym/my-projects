@@ -1,46 +1,44 @@
 #!/bin/bash
-#
+
 # This script creates a new user on the local system.
 # You will be prompted to enter the username (login), the person name, and a password.
 # The username, password, and host for the account will be displayed.
 
 # Make sure the script is being executed with superuser privileges.
 
+if [[ "$UID" -ne 0 ]]
+then
+  echo "Please run this command with sudo" 
+  exit
+fi
+
 # Get the username (login).
-username=$1
-
-# Get the real name (contents for the description field).
-read -p "Please enter your name : " name
-
+read -p "Please Enter Username : " username
+# Get the comment (contents for the description field).
+read -p "Please Enter the comment : " comment
 # Get the password.
-
-password () { < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-16}; echo;}
-
-
+read -s -p "Please Enter Password : " password
 # Create the account.
-
-sudo useradd -c "$name" $1
-
+useradd -c $comment -m $username
 # Check to see if the useradd command succeeded.
-echo -e "\n"
 
-cat /etc/passwd | grep "$1"
-
-# We don't want to tell the user that an account was created when it hasn't been.
-
+if [[ $? -eq 0 ]]
+then
+  echo "Success! User has been created"
+fi
 # Set the password.
-
+echo $password | passwd --stdin $username
 # Check to see if the passwd command succeeded.
-
-sudo cat /etc/shadow | grep $1
-
+if [[ $? -eq 0 ]]
+then
+  echo "password Success!" 
+fi
 # Force password change on first login.
-
+passwd -e $username
 # Display the username, password, and the host where the user was created.
+echo -e "Your username: $username
+Your password: $password
+Hostname : $HOSTNAME"
 
-echo "Your username is $username "
-echo "Your name is $name "
-echo "Your password is "
-password
 
 

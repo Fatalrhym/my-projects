@@ -5,45 +5,33 @@
 #echo $EUID
 
 if [[ $EUID -ne 0 ]]; then 
-   sudo su 
+   echo "Please use this bash script with root privilage" 
+   exit
 fi
 
 # Which files are we going to back up. Please make sure to exist /home/ec2-user/data file
 
+backup_files="/home/ec2-user/data /etc /boot /usr"
 # Where do we backup to. Please create this file before execute this script
-
+dest="/mnt/backup"
 # Create archive filename based on time
-<<comment
-*/5 * * * * cp -R  /etc /mnt/backup/etc-"$(date + "%d %m %Y : %r")"-"$(hostname)" 
-*/5 * * * * cp -R /boot /mnt/backup/boot-"$(date + "%d %m %Y : %r")"-"$(hostname)"
-*/5 * * * * cp -R /usr /mnt/backup/usr-"$(date + "%d %m %Y : %r")"-"$(hostname)"
-*/5 * * * * cp -R /home/ec2-user/data /mnt/backup/data-"$(date + "%d %m %Y : %r")"-"$(hostname)"
-comment
-
+time=$(date +"%Y_%m_%d_%I_%M_%p")
+hostname=$(hostname -s)
+archive_file=$hostname-$time
 # Print start status message.
 
-echo "Backup is starting now."
+echo "We will backup $backup_files to $dest/$archive_file"
 
 # Backup the files using tar.
 
-sudo cp -R  /etc /mnt/backup/etc-"$(date +"%d %m %Y : %r")"-"$(hostname)" 
-
-tar -cvzf /mnt/backup/etc-"$(date +"%d %m %Y : %r")"-"$(hostname)".tar.gz /mnt/backup/etc-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
-sudo cp -R /boot /mnt/backup/boot-"$(date +"%d %m %Y : %r")"-"$(hostname)"  
-
-tar -cvzf /mnt/backup/boot-"$(date +"%d %m %Y : %r")"-"$(hostname)".tar.gz /mnt/backup/boot-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
-sudo cp -R /usr /mnt/backup/usr-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
-tar -cvzf /mnt/backup/usr-"$(date +"%d %m %Y : %r")"-"$(hostname)".tar.gz /mnt/backup/usr-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
-sudo cp -R /home/ec2-user/data /mnt/backup/data-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
-tar -cvzf /mnt/backup/data-"$(date +"%d %m %Y : %r")"-"$(hostname)".tar.gz /mnt/backup/data-"$(date +"%d %m %Y : %r")"-"$(hostname)"
-
+tar czf $dest/$archive_file $backup_files
 # Print end status message.
-echo "Backup succesfully is completed"
-
+echo
+echo "Congrats!Backup succesfully is completed"
+echo
 # Long listing of files in $dest to check file sizes.
-ls -al /mnt/backup
+ls -h $dest
+
+
+#file çıkarma
+#rootta/ sudo tar -xzvf /mnt/backup/backup_file
