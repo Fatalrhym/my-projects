@@ -103,11 +103,12 @@ Resources:
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip  
           sudo ./aws/install
-          aws configure
-          
-          
-          us-east-1
-          yaml
+          sudo echo "[default]" >> .aws/config
+          sudo echo "region = us-east-1" >> .aws/config
+          sudo echo "output = yaml" >> .aws/config
+          sudo echo "[default]" >> .aws/credentials
+          sudo echo "aws_access_key_id = AKIATPASJ5WWKK5QPF75" >> .aws/credentials
+          sudo echo "aws_secret_access_key = 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" >> .aws/credentials
           RDS=`aws rds --region us-east-1 describe-db-instances --query "DBInstances[*].Endpoint.Address"`
           cd /home/ec2-user
           sudo chmod 777 dbserver.endpoint
