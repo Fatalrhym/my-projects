@@ -104,8 +104,8 @@ Resources:
           unzip awscliv2.zip  
           sudo ./aws/install
           aws configure
-          AKIATPASJ5WWEETLKOVR
-          3TD9yztQkEMt/OfOHHU+ik7w7C5rH+aGRCyl/QWQ
+          
+          
           us-east-1
           yaml
           RDS=`aws rds --region us-east-1 describe-db-instances --query "DBInstances[*].Endpoint.Address"`
